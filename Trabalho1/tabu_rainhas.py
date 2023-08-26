@@ -1,13 +1,38 @@
 import random
+import numpy as np
+import matplotlib.pyplot as plt
 
-def no_conflito(linha, coluna, solution):
-    return all(solution[row]       != coluna         and
-               solution[row] + row != coluna + linha and
-               solution[row] - row != coluna - linha
-               for row in range(linha))
 
-def generate_initial(N_queens):
-    return [random.randint(0, N_queens -1) for i in range(N_queens)]
+def plot_chessboard(N_queens):
+    chessboard = np.zeros((N_queens, N_queens))
+
+    for i in range(N_queens):
+        for j in range(N_queens):
+            if (i + j) % 2 == 0:
+                chessboard[i, j] = 1
+
+    plt.imshow(chessboard, cmap="gray")
+    plt.xticks([])
+    plt.yticks([])
+    plt.title(f"Chessboard ({N_queens}x{N_queens})")
+    plt.show()
+
+# def no_conflito(linha, coluna, solution):
+#     return all(solution[row]       != coluna         and
+#                solution[row] + row != coluna + linha and
+#                solution[row] - row != coluna - linha
+#                for row in range(linha))
+
+
+
+# Primeiro passo do algoritmo
+# gerando um vetor aleatório e garantindo que nenhuma 
+# rainha está na mesma coluna 
+def generate_Soluction(N_queens):
+    solucao_Incial = random.sample(range(0, N_queens), N_queens)
+    return solucao_Incial
+
+
 
 def generate_vizinho(solution):
     # Criando uma variável "vizinho" e atribuindo uma lista vazia
@@ -36,23 +61,25 @@ def calc_fitness(solution):
                 conflito = conflito + 1
     return 1.0 / (1.0 + conflito)
       
-def tabu_search(N_queens, IteMax):
+def tabu_search(N_queens, IteMax, Mov_Proibido):
     # variável "atual solução" recebe a função que é responsável 
     # por gerar uma solução base para se dar o inicio do problema
-    Atual_solucao = generate_initial(N_queens)
+     Atual_solucao = generate_Soluction(N_queens)
 
     # Instância da lista tabu para armazenar os movimentos bloqueados 
     # durante um determinado tempo
-    List_Tabu = []
+     List_Tabu = []
 
-
-    for g in range(N_queens):
-        
 
 if __name__ == "__main__":
-    N_queens = int(input('Entre com a quantidade de rainhas:'))
-    IteMax =  70 
+    N_queens = int(input("Entre com a quantidade de rainhas."))
+    IteMax = 70
+    tabu_size = 10
 
-    result = tabu_search(N_queens, IteMax, )
-    print(result)
+    # Tempo maxímo que o movimento fica na lista Tabu
+    Mov_Proibido = 5
 
+
+    # Teste para verificar a primeira solução
+    print(generate_Soluction(N_queens))
+   
