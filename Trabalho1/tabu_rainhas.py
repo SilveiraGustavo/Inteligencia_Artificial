@@ -14,27 +14,27 @@ def plot_chessboard(N_queens):
     plt.imshow(chessboard, cmap="gray")
     plt.xticks([])
     plt.yticks([])
-    plt.title(f"Chessboard ({N_queens}x{N_queens})")
+    plt.title(f"Tabuleiro ({N_queens}x{N_queens})")
     plt.show()
 
-# def no_conflito(linha, coluna, solution):
-#     return all(solution[row]       != coluna         and
-#                solution[row] + row != coluna + linha and
-#                solution[row] - row != coluna - linha
-#                for row in range(linha))
+def no_conflito(linha, coluna, solution):
+    return all(solution[row]       != coluna         and
+               solution[row] + row != coluna + linha and
+                solution[row] - row != coluna - linha
+               for row in range(linha))
 
 
 
 # Primeiro passo do algoritmo
 # gerando um vetor aleatório e garantindo que nenhuma 
 # rainha está na mesma coluna 
-def generate_Soluction(N_queens):
-    solucao_Incial = random.sample(range(0, N_queens), N_queens)
+def gerar_Solucao_Inicial(N_queens):
+    solucao_Incial = random.sample(range(1, 1 + N_queens ), N_queens )
     return solucao_Incial
 
 
 
-def generate_vizinho(solution):
+def gerar_vizinhos(solution):
     # Criando uma variável "vizinho" e atribuindo uma lista vazia
     # para armazenar novos vizinhos
     vizinho = []
@@ -61,14 +61,38 @@ def calc_fitness(solution):
                 conflito = conflito + 1
     return 1.0 / (1.0 + conflito)
       
-def tabu_search(N_queens, IteMax, Mov_Proibido):
-    # variável "atual solução" recebe a função que é responsável 
-    # por gerar uma solução base para se dar o inicio do problema
-     Atual_solucao = generate_Soluction(N_queens)
 
-    # Instância da lista tabu para armazenar os movimentos bloqueados 
-    # durante um determinado tempo
-     List_Tabu = []
+def tabu_search(N_queens, IteMax, Freq_Proibido, solucao_Inicial,tabu_Size):
+    Solucao_Atual = gerar_Solucao_Inicial(N_queens)
+    Melhor_Solucao = solucao_Inicial[:]
+    Lista_Tabu = []
+
+
+    for r in range(IteMax):
+        vizinho = gerar_vizinhos(Solucao_Atual,)
+        melhor_Vizinho = None
+        melhor_vizinho_fitnees = 0.0
+
+        for vizinhos in vizinho:
+            if vizinhos not in Lista_Tabu:
+                fitnees = calc_fitness(vizinhos)
+                if fitnees > melhor_vizinho_fitnees:
+                    melhor_Vizinho = vizinhos
+                    melhor_vizinho_fitnees =  fitnees
+        
+        if melhor_Vizinho is None:
+            break
+
+        Lista_Tabu.append(melhor_Vizinho)
+        if len(Lista_Tabu) > tabu_size:
+            Lista_Tabu.pop(0)
+        
+        if melhor_vizinho_fitnees > calc_fitness (Melhor_Solucao):
+            Melhor_Solucao = melhor_Vizinho[:]
+        
+        Solucao_Atual = melhor_Vizinho[:]
+
+    return Melhor_Solucao, melhor_vizinho_fitnees
 
 
 if __name__ == "__main__":
@@ -77,9 +101,13 @@ if __name__ == "__main__":
     tabu_size = 10
 
     # Tempo maxímo que o movimento fica na lista Tabu
-    Mov_Proibido = 5
+    Freq_Proibido = 5
 
-
+    # print(tabu_search(N_queens,IteMax,Freq_Proibido,tabu_size))
     # Teste para verificar a primeira solução
-    print(generate_Soluction(N_queens))
-   
+    # print(generate_Soluction(N_queens))
+    melhor_solucao, fitness = tabu_search(N_queens, IteMax, Freq_Proibido, gerar_Solucao_Inicial(N_queens), tabu_size)
+    print("Melhor solução encontrada:", melhor_solucao)
+    print("Fitness da melhor solução:", fitness)
+
+    plot_chessboard(melhor_solucao)
