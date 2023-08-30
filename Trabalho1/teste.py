@@ -92,3 +92,5 @@ if __name__ == "__main__":
     # for vizinho in vizinhanca:
        
     #     print(vizinho)
+    print("Teste do abs")
+    print(abs(5 - 6))
