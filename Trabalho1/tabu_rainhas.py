@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-import matplotlib.image as mpimg
+
 
 # Gerando um vetor inicial do Tamanho da entrada do usuário.
 # Método random realizando o sorteio aleatório dos números e 
@@ -22,25 +22,55 @@ def gerando_Vizinhos(solucao_Inicial):
             vizinhos.append(vizinho)
     return vizinhos
 
-# Função para avaliar a qualidade de uma configuração
-def avaliar_solucao(board):
-    # Incianlizando a contagem de conflitos entre rainhas 
+def avaliar_solucao(tabuleiro):
+    n = len(tabuleiro)
+    diagonal_positiva = [0] * (2 * n - 1)
+    diagonal_negativa = [0] * (2 * n - 1)
     conflitos = 0
-    # Loop for está percorrendo cada linha do tabuleiro -> board
-    for i in range(len(board)):
-        # Loop for está percorrendo cada linha + 1 do tabuleiro -> board
-        for j in range(i + 1, len(board)):
-            # Primeiro está sendo verificado se existe uma rainha na mesma linha e coluna,
-            # ou seja, se tem uma rainha na Linha(i)  e tem uma rainha na coluna(j) logo tenho um conflito!!!
-            if board[i] == board[j] or abs(board[i] - board[j]) == j - i:
-                # Mas pode-se ter condições que não satisfaz esse treixo board[i] == board[j], então verifico se 
-                # o cálculo do erro absoluto é igual a subtração de coluna - linha.
-                # Exemplo: abs(board[ i = 1] - board[j = 4]) == 4 - 1 ?
-                        #  abs(-3) == 3 ? Logo o cálculo do erro absoluto faz com que o número nunca seja negativo
-                        #  Portanto, abs(3) == 3 o que resulta em um conflito na solução avaliada!
-                conflitos = conflitos + 1
-    # Retorna a quantidade de conflitos para solução que foi avaliada
+
+    for i in range(n):
+        index_positivo = tabuleiro[i] + i
+        index_negativo = tabuleiro[i] - i + n - 1
+
+        if 0 <= index_positivo < 2 * n - 1:
+            diagonal_positiva[index_positivo] += 1
+
+        if 0 <= index_negativo < 2 * n - 1:
+            diagonal_negativa[index_negativo] += 1
+
+    for i in range(2 * n - 1):
+        if diagonal_positiva[i] > 1:
+            conflitos += diagonal_positiva[i] - 1
+
+        if diagonal_negativa[i] > 1:
+            conflitos += diagonal_negativa[i] - 1
+
     return conflitos
+
+
+'''
+    UMA SOLUÇÃO BEM RUIM PARA GRANDE QUANTIDADE DE RAINHAS, POIS VERIFICA TODAS AS CASAS DO TABULEIRO 
+    OU SEJA, CASO A ENTRADA SEJA DE 60 RAINHAS. VAI TER 60*60 = 3600 POSSI
+'''
+# Função para avaliar a qualidade de uma configuração
+# def avaliar_solucao(board):
+#     # Incianlizando a contagem de conflitos entre rainhas 
+#     conflitos = 0
+#     # Loop for está percorrendo cada linha do tabuleiro -> board
+#     for i in range(len(board)):
+#         # Loop for está percorrendo cada linha + 1 do tabuleiro -> board
+#         for j in range(i + 1, len(board)):
+#             # Primeiro está sendo verificado se existe uma rainha na mesma linha e coluna,
+#             # ou seja, se tem uma rainha na Linha(i)  e tem uma rainha na coluna(j) logo tenho um conflito!!!
+#             if board[i] == board[j] or abs(board[i] - board[j]) == j - i:
+#                 # Mas pode-se ter condições que não satisfaz esse treixo board[i] == board[j], então verifico se 
+#                 # o cálculo do erro absoluto é igual a subtração de coluna - linha.
+#                 # Exemplo: abs(board[ i = 1] - board[j = 4]) == 4 - 1 ?
+#                         #  abs(-3) == 3 ? Logo o cálculo do erro absoluto faz com que o número nunca seja negativo
+#                         #  Portanto, abs(3) == 3 o que resulta em um conflito na solução avaliada!
+#                 conflitos = conflitos + 1
+#     # Retorna a quantidade de conflitos para solução que foi avaliada
+#     return conflitos
 
 # Critérios de aspiração para o problema das N-Rainhas
 def criterio_de_aspiracao(Atual_Conflito, new_conflicts, Lista_tabu):
@@ -106,21 +136,67 @@ def tabu_search(n, max_iterations, tabu_size):
     return Melhor_board
 
 # Função para plotar o tabuleiro com as rainhas
-def plot_tabuleiro(board):
-    n = len(board)
-    tabuleiro = np.zeros((n, n))
+# def plot_tabuleiro(board):
+#     n = len(board)
+#     tabuleiro = np.zeros((n, n))
     
 
-    for i, queen_col in enumerate(board):
-        tabuleiro[i, queen_col - 1] = 1
+#     for i, queen_col in enumerate(board):
+#         tabuleiro[i, queen_col - 1] = 1
 
 
-    plt.imshow(tabuleiro, cmap="gray")
+#     plt.imshow(tabuleiro, cmap="gray")
+#     plt.xticks([])
+#     plt.yticks([])
+#     plt.title(f"N-Queens Solution ({n}x{n})")
+#     plt.show()
+
+# def plot_tabuleiro(board):
+#     n = len(board)
+#     tabuleiro = np.zeros((n, n))
+
+#     # Preencha o tabuleiro alternando as cores
+#     for i in range(n):
+#         for j in range(n):
+#             if (i + j) % 2 == 0:
+#                 tabuleiro[i, j] = 1  # Cor 1 para casas brancas
+#             else:
+#                 tabuleiro[i, j] = 0  # Cor 0 para casas pretas
+
+#     # Plote o tabuleiro
+#     plt.imshow(tabuleiro, cmap="gray")
+#     plt.title("Busca tabu e N-Rainhas")
+#     plt.xticks([])
+#     plt.yticks([])
+#     plt.show()
+
+
+def plot_tabuleiro(board,character="R",):
+    n = len(board)
+    tabuleiro = np.zeros((n, n))
+
+    # Preencha o tabuleiro alternando cores (0 para casas brancas, 1 para casas pretas)
+    for i in range(n):
+        for j in range(n):
+            if (i + j) % 2 == 0:
+                tabuleiro[i, j] = 0  # Cor 0 para casas brancas
+            else:
+                tabuleiro[i, j] = 1  # Cor 1 para casas pretas
+
+    # Plote o tabuleiro
+    fig, ax = plt.subplots(figsize=(6, 6))  # Defina o tamanho da figura
+    ax.matshow(tabuleiro, cmap="gray")  # Use matshow para mostrar a imagem
+    plt.title("Busca tabu e N-Rainhas")
+    
+    # Adicione os caracteres das rainhas ao tabuleiro
+    for i in range(n):
+        for j in range(n):
+            if board[i] == j + 1:
+                ax.text(j, i, character, ha="center", va="center", color="red", fontsize=14)
+
     plt.xticks([])
     plt.yticks([])
-    plt.title(f"N-Queens Solution ({n}x{n})")
     plt.show()
-
 
 # Funcão principal
 if __name__ == "__main__":
@@ -130,7 +206,7 @@ if __name__ == "__main__":
     max_iterations = 100
     #  Definindo a quantidade de iterações que o elemento na lista tabu fica preso
     tabu_size = 5
-    
+
     
     # Imprimindo a primeira solução que foi gerada para aquela configuração
     # no caso aqui só está mostrando o vetor gerado
