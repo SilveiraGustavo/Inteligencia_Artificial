@@ -3,8 +3,8 @@ import pandas as pd
 import random
 
 # Parâmetros do ACO
-num_formigas = 200  # Número de formigas
-num_iteracoes = 500  # Número de iterações
+num_formigas = 40  # Número de formigas
+num_iteracoes = 100  # Número de iterações
 taxa_evaporacao = 0.1  # Taxa de evaporação de feromônio
 alfa = 1.0  # Peso da trilha de feromônio
 beta = 2.0  # Peso da informação heurística
@@ -12,7 +12,7 @@ beta = 2.0  # Peso da informação heurística
 # Estrutura do grafo - Você deve fornecer seu próprio grafo
 # O grafo é representado como uma matriz de adjacência onde graph[i][j] é o custo da aresta de i para j.
 
-def inicializar_feromonios(num_vertices, feromonio_inicial=0.2):
+def inicializar_feromonios(num_vertices, feromonio_inicial=0.01):
     return np.full((num_vertices, num_vertices), feromonio_inicial)
 
 
@@ -104,9 +104,9 @@ def main():
 
      if resposta == 1:
          x = pd.read_csv('exemplo_slides.csv', sep="\t")
-         Vinicial =  1
-         Vfinal = 4
+      
          Matriz_gerada = contruir_Matriz(x)
+         print(Matriz_gerada)
          numero_Vertices = len(x)
          melhor_caminho, melhor_custo = aco_maior_caminho(numero_Vertices, Matriz_gerada)
 
@@ -142,7 +142,6 @@ def contruir_Matriz(x):
     destino = x.iloc[:, 1]
     custo = x.iloc[:,2]
     grafo = np.array([origem,destino,custo])
-    print(grafo)
     return grafo
 
 if __name__ == "__main__":
