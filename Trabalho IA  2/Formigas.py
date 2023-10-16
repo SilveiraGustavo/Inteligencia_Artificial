@@ -1,7 +1,7 @@
 import numpy as np
 import csv
 import random
-
+from collections import OrderedDict 
 
 '''
 Existe algum erro nesse código que ainda não encontrei,
@@ -10,22 +10,21 @@ pois apenas o grafo do slide que encontro o valor correto.
 Ainda não encontrei esse erro.
 '''
 
-Numero_Formigas = 70
-Feromonio_Inicial = 0.1
-Taxa_Evaporacao = 0.01
-Max_Iteracao = 100
+Numero_Formigas = 40
+Feromonio_Inicial = 0.009
+Taxa_Evaporacao = 0.07
+Max_Iteracao = 500
 
 def criar_grafo_arquivo_csv(Arquivo_csv):
-    grafo = {}
+    grafo = OrderedDict()
     with open(Arquivo_csv,'r') as arquivo:
         leitura_csv = csv.reader(arquivo, delimiter="\t")
         next(leitura_csv)
-
         for linha in leitura_csv:
             origem, destino, custo = map(float, linha)
 
             if origem in grafo:
-                grafo[origem].append((destino, -custo))
+                grafo[origem].append((destino, custo))
             else:
                 grafo[origem] = [(destino, custo)]
             
@@ -66,7 +65,7 @@ def Otimizacao_Colonia_formigas(grafo,Numero_Formigas,Feromonio_Inicial,Taxa_Eva
 
 
 def contruir_formiga(grafo, feromonio,Numero_Vertices):
-    inicio = random.choice(list(grafo.keys()))
+    inicio = list(grafo.keys())[0]
     caminho_nao_visitado = set(list(grafo.keys()))
     caminho_nao_visitado.remove(inicio)
     caminho = [inicio]
@@ -115,11 +114,11 @@ def deposita_feromonio(feromonio, formiga, custo_formiga):
         for i in range(len(formiga) - 1):
             origem = int(formiga[i]) % len(feromonio)
             destino = int(formiga[i + 1]) % len(feromonio)
-            feromonio[origem][destino] += 1.0 / custo_formiga
+            feromonio[origem][destino] += custo_formiga
 
 def main():
     print("=============================================")
-    print("[1] Grafo A - 7 vertices e 11 arestas")
+    print("[1] Grafo A - 7 vertices e 11 arestas (SLIDES) ")
     print("[2] Grafo B - 12 vertices e 25 arestas")
     print("[3] Grafo C - 20 vertices e 190 arestas")
     print("[4] Grafo D - 100 vertices e 8020 arestas")
@@ -131,6 +130,9 @@ def main():
     if resposta == 1:
         ArquivoExe =  'exemplo_slides.csv'
         Armazena_Grafo = criar_grafo_arquivo_csv(ArquivoExe)
+        print(Armazena_Grafo)
+
+
         melhor_caminho , melhor_custo = Otimizacao_Colonia_formigas(Armazena_Grafo, Numero_Formigas, Feromonio_Inicial, Taxa_Evaporacao, Max_Iteracao)
         print("Melhora caminho encontrado", melhor_caminho)
         print("Melhor custo encontrado:", melhor_custo)
