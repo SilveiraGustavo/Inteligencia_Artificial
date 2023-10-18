@@ -7,14 +7,21 @@ from collections import OrderedDict
 Existe algum erro nesse código que ainda não encontrei,
 pois apenas o grafo do slide que encontro o valor correto.
 
-Ainda não encontrei esse erro.
+Ainda não encontrei esse erro. 
+
+
+Ou então pode ser um erro na hora que foi calculado o custo do código original 
+SIMPLESMENTE NÃO SEI O QUE FAZER 
 '''
 
-Numero_Formigas = 40
-Feromonio_Inicial = 0.009
-Taxa_Evaporacao = 0.07
-Max_Iteracao = 500
+Numero_Formigas = 100
+Feromonio_Inicial = 0.07
+Taxa_Evaporacao = 0.4
+Max_Iteracao = 100
 
+
+
+    
 def criar_grafo_arquivo_csv(Arquivo_csv):
     grafo = OrderedDict()
     with open(Arquivo_csv,'r') as arquivo:
@@ -37,6 +44,7 @@ def criar_grafo_arquivo_csv(Arquivo_csv):
 def Otimizacao_Colonia_formigas(grafo,Numero_Formigas,Feromonio_Inicial,Taxa_Evaporacao,Max_Iteracao):
     Numero_Vertices = len(grafo)
     vertices = list(grafo.keys())
+    
     feromonio = np.full((Numero_Vertices, Numero_Vertices), Feromonio_Inicial)
 
     melhor_caminho = []
@@ -53,28 +61,44 @@ def Otimizacao_Colonia_formigas(grafo,Numero_Formigas,Feromonio_Inicial,Taxa_Eva
             for i in range(Numero_Vertices):
                 for j in range(Numero_Vertices):
                     if i != j:
-                        feromonio[i][j] *= (1.0 - Taxa_Evaporacao)
+                        feromonio[i][j] *= (1.0 -  Taxa_Evaporacao)
             for formiga in formigas:
                 custo_formiga = calcular_custo(formiga, grafo)
+                # print('Custo de cada iteração:', custo_formiga)
+        
                 if custo_formiga > melhor_custo:
                     melhor_custo = custo_formiga
                     melhor_caminho = formiga
-                
+                    
                 deposita_feromonio(feromonio, formiga, custo_formiga)
     return melhor_caminho, melhor_custo
 
 
-def contruir_formiga(grafo, feromonio,Numero_Vertices):
+def contruir_formiga(grafo, feromonio, Numero_Vertices):
     inicio = list(grafo.keys())[0]
     caminho_nao_visitado = set(list(grafo.keys()))
     caminho_nao_visitado.remove(inicio)
     caminho = [inicio]
 
+
+    visitados = set()  # Manter o controle de vértices visitados
+
     while caminho_nao_visitado: 
-        proximo =  escolhe_vertice(grafo,feromonio, caminho[-1], caminho_nao_visitado)
+        proximo = escolhe_vertice(grafo, feromonio, caminho[-1], caminho_nao_visitado)
+        
+        # Verifique se o próximo vértice já foi visitado
+        if proximo in visitados:
+            # Você pode escolher ignorar o vértice ou tomar outra ação apropriada
+            # Aqui, estamos apenas ignorando o vértice
+            continue
+        
         caminho.append(proximo)
         caminho_nao_visitado.remove(proximo)
+        
+        # Adicione o vértice visitado aos visitados
+        visitados.add(proximo)
     return caminho
+
 
 def escolhe_vertice(grafo, feromonio, origem, caminho_nao_visitado):
     Lista_Probabilidade = []
@@ -96,17 +120,36 @@ def escolhe_vertice(grafo, feromonio, origem, caminho_nao_visitado):
 
     return escolhido
 
-
 def calcular_custo(formiga, grafo):
     custo = 0.0
     for i in range(len(formiga) - 1):
         origem = formiga[i]
+        # print(origem)
         destino = formiga[i + 1]
-        arestas = grafo[origem]
-        for (vertice, custo_aresta) in arestas:
+        # print('Destino ', destino)
+        aresta =  grafo.get(origem, [])
+        # print('Aresta', aresta)
+
+
+        for vertice , custo_aresta in aresta:
+            
             if vertice == destino:
                 custo += custo_aresta
     return custo
+# def calcular_custo(formiga, grafo):
+#     custo = 0.0
+#     for i in range(len(formiga) - 1):
+       
+#         origem = formiga[i]
+#         destino = formiga[i + 1]
+#         arestas = grafo[origem]
+        
+#         for (vertice, custo_aresta) in arestas:
+#             print('O vertice', vertice)
+#             print('O destino', destino)
+#             if vertice == destino:
+#                 custo += custo_aresta
+#     return custo
 
 
 def deposita_feromonio(feromonio, formiga, custo_formiga):
@@ -140,10 +183,10 @@ def main():
     elif resposta == 2:
         Arquivo1 = 'grafo1.csv'
         Armazena_Grafo1 = criar_grafo_arquivo_csv(Arquivo1)
-        melhor_caminho , melhor_custo = Otimizacao_Colonia_formigas(Armazena_Grafo1, Numero_Formigas, Feromonio_Inicial, Taxa_Evaporacao, Max_Iteracao)
-        print("Melhora caminho encontrado", melhor_caminho)
-        print("Melhor custo encontrado:", melhor_custo)
-    
+        print('Arquivo do grafo\n', Armazena_Grafo1)
+        melhor_caminho , melhor_custo = Otimizacao_Colonia_formigas(Armazena_Grafo1, Numero_Formigas,Feromonio_Inicial, Taxa_Evaporacao, Max_Iteracao)
+        print("Melhor caminho encontrado\n", melhor_caminho)
+        print("Maior custo encontrado\n", melhor_custo)
     
     elif resposta == 3:
         Arquivo2 = 'grafo2.csv'
