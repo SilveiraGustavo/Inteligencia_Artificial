@@ -2,29 +2,51 @@ import numpy as np
 import csv
 import random
 from collections import OrderedDict 
-
-'''
-Existe algum erro nesse código que ainda não encontrei,
-pois apenas o grafo do slide que encontro o valor correto.
-
-Ainda não encontrei esse erro. 
+import matplotlib.pyplot as plt
 
 
-Ou então pode ser um erro na hora que foi calculado o custo do código original 
-SIMPLESMENTE NÃO SEI O QUE FAZER 
-'''
+def plot_grafico_convergencia(custos_por_iteracao, melhor_rota, grafo):
+    plt.figure(figsize=(10, 5))
 
-Numero_Formigas = 100
-Feromonio_Inicial = 0.07
-Taxa_Evaporacao = 0.4
-Max_Iteracao = 100
+    plt.subplot(1, 2, 1)
+    plt.plot(range(len(custos_por_iteracao)), custos_por_iteracao, marker='o')
+    plt.title('Convergência das Iterações')
+    plt.xlabel('Iteração')
+    plt.ylabel('Custo')
+    plt.grid(True)
 
+    plt.subplot(1, 2, 2)
+    plt.title('Melhor Rota Encontrada')
+    for origem, destino in zip(melhor_rota, melhor_rota[1:]):
+        plt.plot([origem, destino], [0, 0], 'b-')
+    for vertice in melhor_rota:
+        plt.plot(vertice, 0, 'ro')
 
+    plt.xticks(list(grafo.keys()))
+    plt.xlabel('Vértices')
+    plt.yticks([])
 
+    plt.tight_layout()
+    plt.show()
+
+def plot_vertices_rota(grafo, rota):
+    plt.figure()
+    plt.title('Vértices da Rota Encontrada')
     
+    for origem, arestas in grafo.items():
+        for destino, _ in arestas:
+            plt.plot([origem, destino], [0, 0], 'b-')
+
+    for vertice in rota:
+        plt.plot(vertice, 0, 'ro')
+    
+    plt.xticks(list(grafo.keys()))
+    plt.xlabel('Vértices')
+    plt.yticks([])
+    plt.show()
 def criar_grafo_arquivo_csv(Arquivo_csv):
     grafo = OrderedDict()
-    with open(Arquivo_csv,'r') as arquivo:
+    with open(Arquivo_csv, 'r') as arquivo:
         leitura_csv = csv.reader(arquivo, delimiter="\t")
         next(leitura_csv)
         for linha in leitura_csv:
@@ -34,73 +56,75 @@ def criar_grafo_arquivo_csv(Arquivo_csv):
                 grafo[origem].append((destino, custo))
             else:
                 grafo[origem] = [(destino, custo)]
-            
-            if destino in grafo:
-                grafo[destino].append((origem, custo))
-            else: 
-                grafo[destino] = [(origem, custo)]
-    return grafo 
 
-def Otimizacao_Colonia_formigas(grafo,Numero_Formigas,Feromonio_Inicial,Taxa_Evaporacao,Max_Iteracao):
+               
+
+    return grafo
+
+def Otimizacao_Colonia_formigas(grafo, Numero_Formigas, Feromonio_Inicial, Taxa_Evaporacao, Max_Iteracao):
     Numero_Vertices = len(grafo)
     vertices = list(grafo.keys())
-    
+
     feromonio = np.full((Numero_Vertices, Numero_Vertices), Feromonio_Inicial)
 
     melhor_caminho = []
-    melhor_custo = float('-Inf')
+    melhor_custo = float('-inf')
+    
+    custos_por_iteracao = []  # Lista para armazenar custos a cada iteração
 
 
     for i in range(Max_Iteracao):
         formigas = []
 
-        for l in range(Numero_Vertices):
-            formiga = contruir_formiga(grafo, feromonio, Numero_Vertices)
+        for l in range(Numero_Formigas):
+            formiga = construir_formiga(grafo, feromonio, Numero_Vertices)
             formigas.append(formiga)
 
             for i in range(Numero_Vertices):
                 for j in range(Numero_Vertices):
                     if i != j:
-                        feromonio[i][j] *= (1.0 -  Taxa_Evaporacao)
+                        feromonio[i][j] *= (1.0 - Taxa_Evaporacao)
+
             for formiga in formigas:
                 custo_formiga = calcular_custo(formiga, grafo)
-                # print('Custo de cada iteração:', custo_formiga)
-        
                 if custo_formiga > melhor_custo:
                     melhor_custo = custo_formiga
                     melhor_caminho = formiga
-                    
-                deposita_feromonio(feromonio, formiga, custo_formiga)
+                    deposita_feromonio(feromonio, formiga, custo_formiga)
+        
+        custos_por_iteracao.append(melhor_custo)  # Armazene o custo atual
+
+    # Plotar o gráfico do grafo com custos por iteração
+    plot_grafico_convergencia(custos_por_iteracao, melhor_caminho, grafo)
+    
+    # Plotar o gráfico dos vértices da melhor rota encontrada
+    # plot_vertices_rota(grafo, melhor_caminho)
+  
     return melhor_caminho, melhor_custo
 
-
-def contruir_formiga(grafo, feromonio, Numero_Vertices):
+def construir_formiga(grafo, feromonio, Numero_Vertices):
     inicio = list(grafo.keys())[0]
     caminho_nao_visitado = set(list(grafo.keys()))
     caminho_nao_visitado.remove(inicio)
     caminho = [inicio]
 
+    visitados = set()
 
-    visitados = set()  # Manter o controle de vértices visitados
-
-    while caminho_nao_visitado: 
+    while caminho_nao_visitado:
         proximo = escolhe_vertice(grafo, feromonio, caminho[-1], caminho_nao_visitado)
-        
-        # Verifique se o próximo vértice já foi visitado
+
         if proximo in visitados:
-            # Você pode escolher ignorar o vértice ou tomar outra ação apropriada
-            # Aqui, estamos apenas ignorando o vértice
             continue
-        
+
         caminho.append(proximo)
         caminho_nao_visitado.remove(proximo)
-        
-        # Adicione o vértice visitado aos visitados
         visitados.add(proximo)
+
     return caminho
-
-
 def escolhe_vertice(grafo, feromonio, origem, caminho_nao_visitado):
+    # if alvo_vertice not in caminho_nao_visitado:
+    
+    
     Lista_Probabilidade = []
 
     total = 0.0
@@ -111,13 +135,15 @@ def escolhe_vertice(grafo, feromonio, origem, caminho_nao_visitado):
             Lista_Probabilidade.append((destino, prob))
             total = total + prob
 
-    if not Lista_Probabilidade:
-        # Se não houver probabilidade válida, escolha um vértice aleatório entre os não visitados
-        escolhido = random.choice(list(caminho_nao_visitado))
-    else:
-        Lista_Probabilidade = [(destino, prob / total) for destino, prob in Lista_Probabilidade]
-        escolhido = random.choices(Lista_Probabilidade, k=1)[0][0]
+        if not Lista_Probabilidade:
+            # Se não houver probabilidade válida, escolha um vértice aleatório entre os não visitados
+            escolhido = random.choice(list(caminho_nao_visitado))
+        else:
+            Lista_Probabilidade = [(destino, prob / total) for destino, prob in Lista_Probabilidade]
+            escolhido = random.choices(Lista_Probabilidade, k=1)[0][0]
 
+    # else:
+    #     escolhido =  alvo_vertice
     return escolhido
 
 def calcular_custo(formiga, grafo):
@@ -136,20 +162,6 @@ def calcular_custo(formiga, grafo):
             if vertice == destino:
                 custo += custo_aresta
     return custo
-# def calcular_custo(formiga, grafo):
-#     custo = 0.0
-#     for i in range(len(formiga) - 1):
-       
-#         origem = formiga[i]
-#         destino = formiga[i + 1]
-#         arestas = grafo[origem]
-        
-#         for (vertice, custo_aresta) in arestas:
-#             print('O vertice', vertice)
-#             print('O destino', destino)
-#             if vertice == destino:
-#                 custo += custo_aresta
-#     return custo
 
 
 def deposita_feromonio(feromonio, formiga, custo_formiga):
@@ -159,7 +171,13 @@ def deposita_feromonio(feromonio, formiga, custo_formiga):
             destino = int(formiga[i + 1]) % len(feromonio)
             feromonio[origem][destino] += custo_formiga
 
+
 def main():
+    Numero_Formigas = 100
+    Feromonio_Inicial = 0.01
+    Taxa_Evaporacao = 0.1
+    Max_Iteracao = 100
+
     print("=============================================")
     print("[1] Grafo A - 7 vertices e 11 arestas (SLIDES) ")
     print("[2] Grafo B - 12 vertices e 25 arestas")
@@ -194,7 +212,7 @@ def main():
         melhor_caminho , melhor_custo = Otimizacao_Colonia_formigas(Armazena_Grafo2, Numero_Formigas, Feromonio_Inicial, Taxa_Evaporacao, Max_Iteracao)
         print("Melhora caminho encontrado", melhor_caminho)
         print("Melhor custo encontrado:", melhor_custo)
-    
+        
     elif resposta == 4:
         Arquivo3 = 'grafo3.csv'
         Armazena_Grafo3 = criar_grafo_arquivo_csv(Arquivo3)
