@@ -58,7 +58,7 @@ no AVA e ter os seguintes conteúdos obrigatórios:
   
   - Gráfico de convergência 
   
-  • Uma análise do tempo de execução do algoritmo (em segundos) conforme o tamanho
+  - Uma análise do tempo de execução do algoritmo (em segundos) conforme o tamanho
   do problema aumenta (use o arquivo gerador_grafos.R para gerar grafos aleatórios de
   qualquer tamanho e assim fazer as comparações).
 
