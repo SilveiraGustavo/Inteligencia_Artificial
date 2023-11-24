@@ -63,4 +63,54 @@ no AVA e ter os seguintes conteúdos obrigatórios:
   qualquer tamanho e assim fazer as comparações).
 
 
-# Trabalho 3 - Otimização por Enxame de Particulas
+# Trabalho 3 - Inteligência de Enxames para Funções Complexas
+
+Esse é o trabalho prático da disciplina de Inteligência Artificial. Ela terá foco em algoritmos evolucionários que envolvem o uso de técnicas baseadas em inteligência de enxame.
+
+Vamos ao problema:
+- Você deve desenvolver um Particle Suarm Optimization (PSO) capaz de encontrar o conjunto ótimo x* levando em conta a função Rastringi com restrições e n dimensões mostrada na na equação.  Qualquer solução que viole qualquer uma das restrições deve ser descartada ou penalizada. O espaço de busca deve variar no intervalo [-5.12, 5.212], logo, soluções que possuam valores fora desse intervalo serão consideradas inválidas.
+
+- Veja o mapeamento do espaço no círculo trigonométrico mostrado na Figura. A curva em cor vermelha identifica a faixa de ângulos 2πxi que satisfazem a restrição de desigualdade g(x). Ambas as linhas em azul identificam os ângulos que satisfazem a restrição de igualdade h(x). Entretanto, somente o ângulo indicado pela linha azul pontilhada satisfaz as restrições de igualdade e desigualdade ao mesmo tempo, sendo esta a solução ótima. O PSO deverá encontrar este ponto que corresponde a 2πxi com
+xi = −1/3, ou seja, 2π (−1/3).
+
+
+Como de costume você deverá preparar a sua implementação e um relatório contendo de 2 a
+4 páginas. Os resultados do algoritmo serão discutidos em sala no dia 23/11/2023. O relatório
+deverá ser entregue até o dia 30/11/2023. É obrigatório o uso do modelo disponibilizando no
+AVA. São requisitos dessa atividade:
+
+a) O algoritmo deverá ser implementado obrigatoriamente utilizando-se linguagem R, Python
+ou Octave com uma semente fixa.
+
+b) Depois de implementar, faça vários testes para encontrar a melhor parametrização sendo
+que o algoritmo deverá iniciar com população gerada aleatoriamente segundo distribuição
+uniforme e exibir ao final de sua execução o seguinte:
+
+  - Melhor indivíduo encontrado ao longo de todas as gerações
+  - Fitness do melhor indivíduo encontrado ao longo de todas as gerações
+  - Gráficos:
+      -   Fitness do melhor indivíduo de cada população, geração a geração.
+       -   Média da fitness dos indivíduos de cada população, geração a geração.
+      - Desvio padrão da fitness dos indivíduos de cada população, geração a geração.
+
+c) Após realizar os testes do item anterior e definir uma parametrização que você julgar
+adequada, mantenha os valores fixados e execute o algoritmo 20 vezes. Levando em conta
+as 20 execuções, calcule a média e desvio padrão da fitness apenas dos melhores indivíduos
+encontrados em cada uma das 20 execuções
+
+d) Reporte no relatório apenas os resultados dos itens (a) e (b) relacionados a melhor para-
+metrização que você encontrou.
+
+e) Verifique e comente no relatório o que acontece quando o número de dimensões n é
+aumentado?
+
+f) Você pode adicionar novos recursos ao algoritmo ou usar a versão padrão, em todo caso,
+comente as estratégias utilizadas, os efeitos delas e os valores de parametrização selecio-
+nados.
+
+g) É terminantemente proibido o uso de qualquer pacote pronto para realizar o
+trabalho que o algoritmo faria. Você pode utilizar pacotes para exibir gráficos e outras
+tarefas rotineiras, apenas. O algoritmo deve ser implementado do zero.
+
+h) O total de dimensões n do problema deve ser configurável, no entanto, procure testá-lo
+com 5 dimensões. Este é o número de dimensões que será utilizado na avaliação em sala.
