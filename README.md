@@ -27,20 +27,20 @@ possuir no máximo 3 páginas. Você deverá postar somente o relatório no AVA.
 O trabalho 2 da disciplina de Inteligência Artificial deverá ser realizado individualmente,
 sendo que:
 
-  • Você deverá implementar o algoritmo Ant Colony Optimization (ACO), como visto em sala, para resolver o 
+  - Você deverá implementar o algoritmo Ant Colony Optimization (ACO), como visto em sala, para resolver o 
   Longest Path Problem aplicado a grafos não direcionados cíclicos.
 
-  • São fornecidos três grafos como entrada. O primeiro possui 12 vértices e 25 arestas, o segundo possui 20 vértices
+  - São fornecidos três grafos como entrada. O primeiro possui 12 vértices e 25 arestas, o segundo possui 20 vértices
   e 190 arestas. Já o terceiro grafo possui 100 vértices e 8020 arestas. Todos os grafos possuem arestas 
   ponderadas, com pesos variando entre 1 a 10. Os vértices são numerados de 1 a n. Confira os arquivos .csv fornecidos.
   
-  • Para estes grafos a solução ótima está especificada, sendo que o primeiro tem custo da maior rota 35.3, o
+  - Para estes grafos a solução ótima está especificada, sendo que o primeiro tem custo da maior rota 35.3, o
   segundo 168  e o terceiro de 990.
   
-  • Em todos os grafos as formigas devem obrigatóriamente partir do vértice 1 e seguir até o vértice final sendo
+  - Em todos os grafos as formigas devem obrigatóriamente partir do vértice 1 e seguir até o vértice final sendo
   que o último vértice é o de valor mais alto (12, 20, 100).
   
-  • Um vértice já visitado não pode ser visitado novamente. Subciclos também não são permitidos. Estas restrições
+  - Um vértice já visitado não pode ser visitado novamente. Subciclos também não são permitidos. Estas restrições
   deve ser tratadas no ACO.
   
 
@@ -49,14 +49,14 @@ resultados serão discutidos em sala no dia 05/10/2023. Na sequência você deve
 relatório para ser entregue que deverá seguir o modelo disponibilizando
 no AVA e ter os seguintes conteúdos obrigatórios:
 
-  • As características deste problema.
+  - As características deste problema.
   
-  • As principais decisões de implementação feitas por você no algoritmo (discutir os parâ-
+  - As principais decisões de implementação feitas por você no algoritmo (discutir os parâ-
   metros escolhidos).
   
-  • O melhor caminho e seu custo encontrado
+  - O melhor caminho e seu custo encontrado
   
-  • Gráfico de convergência 
+  - Gráfico de convergência 
   
   • Uma análise do tempo de execução do algoritmo (em segundos) conforme o tamanho
   do problema aumenta (use o arquivo gerador_grafos.R para gerar grafos aleatórios de
