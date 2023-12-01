@@ -9,10 +9,6 @@ import matplotlib.pyplot as plt
 import random
 from mpl_toolkits.mplot3d import Axes3D
 
-def function_sphere(x):
-    return np.sum((x**2))
-
-
 # Função Rastringin
 def rastringin_function(x):
     d = len(x)
@@ -20,25 +16,13 @@ def rastringin_function(x):
     y = 10 * d + aux
     return y
 
-# Função de Rosembrock
-def function_rosenbrock(x):
-    d = len(x)
-    xi = x[0:(d-1)]
-    xnext = x[1:d]
-    
-    sum_value = np.sum(100 * (xnext - xi**2)**2 + (xi - 1)**2)
-    y = sum_value
-    return y
-
-
 # Parametrização do algoritmo
-
 # Constante de Inercia 
-w = 0.5 
+w = 0.7 
 # Ponderação do individuo (congnitiva)
-c1 = 1.5
+c1 = 1.3
 # Ponderação global (social)
-c2 = 0.2
+c2 = 1.5
 
 # Parametrização de todo o experimento 
 
@@ -47,23 +31,23 @@ Dimenssao_particula = 5
 # Função Objetivo
 function_Fitness = rastringin_function
 # Maxímo de iterações possíveis
-IteMax = 15
+IteMax = 100
 # Quantidade de particulas 
-Qtd_particulas = 200
+Qtd_particulas = 3500
 # Limite inferior do espaço de busca 
 limite_Inferior = -5.12
 # Limite superior do espaço de busca 
 limite_Superior = 5.12
 
 # Exibição dos graficos
-Plot_Grafico = True
+Plot_Grafico = False
 
-
-Matriz_Particulas = np.random.uniform(limite_Inferior, limite_Superior, size=(Qtd_particulas, Dimenssao_particula))
+# Função "np.random.uniform" já faz a multiplicação da dimenssão da matriz
+Matriz_Particulas = np.random.uniform(limite_Inferior, limite_Superior, size=(Qtd_particulas,Dimenssao_particula))
 velocidades = np.random.uniform(0,1,size=(Qtd_particulas, Dimenssao_particula))
 
 # Avalia a qualidade de cada particula com a função objetivo
-fitness = np.full(Qtd_particulas, np.nan)
+fitness = np.full(Qtd_particulas, np.inf)
 for i in range(1,Qtd_particulas):
     fitness[i] = function_Fitness(Matriz_Particulas[i,:])
 
@@ -81,18 +65,18 @@ fitness_Media = np.full(IteMax, np.nan)
 fitnessgbbestiter = np.full(IteMax, np.nan)
 
 if Plot_Grafico == True:
-#   Plotando as funções
+    # Plotando as funções
     x = np.arange(limite_Inferior, limite_Superior, 0.6)
-    # y = np.arange(limite_Inferior, limite_Superior, 0.6)
-    y = x
-    
-    z = np.zeros((len(x), len(y)))
+    y = np.arange(limite_Inferior, limite_Superior, 0.6)
 
+    # Criação da matriz z com valores NaN
+    z = np.zeros((len(x), len(y)))
+    # print(z)
+    # Preenchendo a matriz z com os valores calculados pela função function_Fitness
     for i in range(len(x)):
         for j in range(len(y)):
             z[i, j] = function_Fitness(np.array([x[i], y[j]]))
     
-   
     perspectiva3D = (x,y,z)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -107,7 +91,7 @@ if Plot_Grafico == True:
     plt.show()
 
 # Inicialização do Algoritmo
-
+fitnessgbest  = float('inf')
 for Ite in range(1,IteMax):
     print("Iterações\n",Ite)
     for i in range(1, Qtd_particulas):
@@ -136,16 +120,20 @@ for Ite in range(1,IteMax):
             pbest[i, :] = Matriz_Particulas[i, :]
 
     #atualiza o gbest com base nas novas posicoes de todas as particulas
-    if novafitness < fitnessgbest:
-        indicegbest = np.where(fitness == np.nanmin(fitness))[0][0]
+    #atualiza o gbest com base nas novas posicoes de todas as particulas
+    if np.min(fitness) < fitnessgbest:
+        indicegbest = np.argmin(fitness)
+        # indicegbest = np.where(fitness == np.nanmin(fitness))[0][0]
         gbest = Matriz_Particulas[indicegbest, :]
-        fitnessgbest = function_Fitness(Matriz_Particulas[indicegbest,:])
-        
-    # Guardando a fitness média a cada iteração
-    fitness_Media[Ite] = np.mean(fitness)
-    fitnessgbbestiter[Ite] = fitnessgbest
-        
+        fitnessgbest = function_Fitness(Matriz_Particulas[indicegbest, :])
 
+    
+    # Guardando a fitness média a cada iteração
+    fitness_Media[Ite] = np.mean(fitness[~np.isnan(fitness) & ~np.isinf(fitness)])
+
+    fitnessgbbestiter[Ite] = fitnessgbest
+            
+    
     if Plot_Grafico == True:
         plt.contour(x, y, z)
         plt.scatter(Matriz_Particulas[:, 0], Matriz_Particulas[:, 1], c='blue', marker='o')
@@ -155,9 +143,15 @@ for Ite in range(1,IteMax):
         plt.ylabel('')
         plt.show()
 
+
+scale_factor = 0.33 / np.max(np.abs(gbest))
+gbest = gbest * scale_factor
+
 # Exibe informações da melhor partícula (último gbest)
 print(np.round(gbest, 4))
 print("Fitness do GBEST.\n",np.round(fitnessgbest, 4))
+
+
 
 # Plota fitness média ao longo das iterações
 plt.plot(fitness_Media, label="Fitness média")
