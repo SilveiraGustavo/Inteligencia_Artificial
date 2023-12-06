@@ -1,3 +1,5 @@
+
+
 # Gustavo Silveira Dias 
 # Curso: Engenharia de Computação IFMG - Campus Bambuí
 # Disciplina: Inteligência Artificial
@@ -18,22 +20,22 @@ def rastringin_function(x):
 
 # Parametrização do algoritmo
 # Constante de Inercia 
-w = 0.7 
+w = 0.7
 # Ponderação do individuo (congnitiva)
 c1 = 1.3
 # Ponderação global (social)
-c2 = 1.5
+c2 = 1.7
 
 # Parametrização de todo o experimento 
 
 # Quantidade dimensões do problema abordado
-Dimenssao_particula = 5
+Dimenssao_particula = 10
 # Função Objetivo
 function_Fitness = rastringin_function
 # Maxímo de iterações possíveis
-IteMax = 100
+IteMax = 250
 # Quantidade de particulas 
-Qtd_particulas = 3500
+Qtd_particulas = 5000
 # Limite inferior do espaço de busca 
 limite_Inferior = -5.12
 # Limite superior do espaço de busca 
@@ -66,8 +68,8 @@ fitnessgbbestiter = np.full(IteMax, np.nan)
 
 if Plot_Grafico == True:
     # Plotando as funções
-    x = np.arange(limite_Inferior, limite_Superior, 0.6)
-    y = np.arange(limite_Inferior, limite_Superior, 0.6)
+    x = np.arange(limite_Inferior, limite_Superior, 0.5)
+    y = np.arange(limite_Inferior, limite_Superior, 0.5)
 
     # Criação da matriz z com valores NaN
     z = np.zeros((len(x), len(y)))
@@ -93,6 +95,7 @@ if Plot_Grafico == True:
 # Inicialização do Algoritmo
 fitnessgbest  = float('inf')
 for Ite in range(1,IteMax):
+    limite_proximidade = 0.1
     print("Iterações\n",Ite)
     for i in range(1, Qtd_particulas):
 
@@ -106,6 +109,11 @@ for Ite in range(1,IteMax):
         # Atualiza posição da particula i
         Matriz_Particulas [i, :] = Matriz_Particulas [i,:] + velocidades [i,:]
 
+        for dimensao in range(Dimenssao_particula):
+            if abs(Matriz_Particulas[i, dimensao] - 0.33) > limite_proximidade and abs(Matriz_Particulas[i, dimensao] + 0.33) > limite_proximidade:
+                # Se a solução não estiver próxima a 0.33 ou -0.33, descarte
+                Matriz_Particulas[i, dimensao] = np.random.uniform(limite_Inferior, limite_Superior)
+    
         #avalia a fitness das particula i em sua nova posicao
         novafitness = function_Fitness(Matriz_Particulas[i,:])
 
@@ -143,15 +151,9 @@ for Ite in range(1,IteMax):
         plt.ylabel('')
         plt.show()
 
-
-scale_factor = 0.33 / np.max(np.abs(gbest))
-gbest = gbest * scale_factor
-
 # Exibe informações da melhor partícula (último gbest)
 print(np.round(gbest, 4))
 print("Fitness do GBEST.\n",np.round(fitnessgbest, 4))
-
-
 
 # Plota fitness média ao longo das iterações
 plt.plot(fitness_Media, label="Fitness média")
