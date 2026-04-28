@@ -114,26 +114,14 @@ Antes de começar, você precisará ter instalado em sua máquina:
 1. **Clone o repositório:**
 
 ```bash
-git clone https://github.com/seu-usuario/busca-tabu-n-rainhas.git
-cd busca-tabu-n-rainhas
+git clone https://github.com/SilveiraGustavo/Inteligencia_Artificial.git
+cd Trabalho-1
 ```
 
 2. **Instale as dependências:**
 
 ```bash
 pip install numpy matplotlib
-```
-
-Ou usando um arquivo `requirements.txt`:
-
-```bash
-pip install -r requirements.txt
-```
-
-**Conteúdo do `requirements.txt`:**
-```
-numpy>=1.19.0
-matplotlib>=3.3.0
 ```
 
 ---
