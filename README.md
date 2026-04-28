@@ -115,7 +115,6 @@ Antes de começar, você precisará ter instalado em sua máquina:
 
 ```bash
 git clone https://github.com/SilveiraGustavo/Inteligencia_Artificial.git
-cd Trabalho-1
 ```
 
 2. **Instale as dependências:**
